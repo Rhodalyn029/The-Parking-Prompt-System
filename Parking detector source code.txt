@@ -1,0 +1,55 @@
+ #include <LiquidCrystal.h>
+#include <Wire.h>
+long duration;
+
+LiquidCrystal lcd = LiquidCrystal(10,9,8,7,6,5);
+const int trigPin = 12;
+const int echoPin = 11;
+int buzzerPin = 4;
+float time, distance;
+void setup()
+{
+  pinMode(buzzerPin,OUTPUT); // Configures buzzer as an output
+  pinMode(trigPin, OUTPUT); // Configures trigPin on ultrasonic sensor as an Output
+  pinMode(echoPin, INPUT); //Configures echoPin on ultrasonic sensor as an Input
+	Serial.begin(9600);
+  lcd.begin(16, 2); //initializes the interface of the Lcd
+  
+}
+
+void loop()
+{
+           
+  // Clears the trigPin condition
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(5);
+  // Sets the trigPin to HIGH for 10 microseconds
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW); //Sets trigPin to LOW
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  time = pulseIn(echoPin, HIGH);
+  
+  // Calculating the distance
+  distance=time*0.034/2; 
+
+  //for serial monitor
+  Serial.print("Distance:CM ");
+  Serial.println(distance);
+  
+  /*Checking for distance between device and car. Makes a sound when car gets too close(30cm) and displays the “STOP!!!” message*/
+  lcd.setCursor(0,0); 
+ lcd.setCursor(11,1);  // sets cursor of Lcd
+  if (distance<=30){
+    digitalWrite(buzzerPin, HIGH); 
+    delay (500);
+     lcd.print("STOP!!!");
+   }
+else{
+    digitalWrite(buzzerPin, LOW);
+     lcd.clear();
+   }
+ 
+   delay(1000);
+   
+  } 
